@@ -62,6 +62,24 @@ Cypress.Commands.add("login", (username, password) => {
         },
       });
     })
+    .then((respons) => {
+      const tokenExtractor = (string) => {
+        return string.substring(string.indexOf("=") + 1, string.indexOf(";"));
+      };
+
+      const keyExtractor = (string) => {
+        return string.substring(0, string.indexOf("="));
+      };
+
+      cy.setCookie(
+        keyExtractor(respons.headers["set-cookie"][0]),
+        tokenExtractor(respons.headers["set-cookie"][0])
+      );
+      cy.setCookie(
+        keyExtractor(respons.headers["set-cookie"][1]),
+        tokenExtractor(respons.headers["set-cookie"][1])
+      );
+    })
     .then(() => {
       cy.request({
         method: "GET",
